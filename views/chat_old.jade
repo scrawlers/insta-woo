@@ -1,0 +1,110 @@
+extends layout
+
+block content
+	body.chat-page
+		.header-wrapper
+			.header
+			.user-header
+				h2 
+					table
+						tr
+							td Hi
+							td 
+								p#codename.pcn=user.codename
+							td
+				#countdown_dashboard
+					.dash(class="minutes_dash")
+						span.dash_title Next
+						.digit
+							.top(style='display: none;') 0
+							#min_1.bottom(style='display: block;') 0
+						.digit
+							.top(style='display: none;') 0
+							#min_2.bottom(style='display: block;') 0
+						span.colon_game :
+					.dash(class="seconds_dash")
+						span.dash_title Game
+						.digit
+							.top(style='display: none;') 0
+							#sec_1.bottom(style='display: block;') 0
+						.digit
+							.top(style='display: none;') 0
+							#sec_2.bottom(style='display: block;') 0	
+				a.signout(href="#", id="logout")
+		.chat-container
+			.current-photo
+			.next-photo
+			.next-photo-noframe
+			.previous-photo
+			.chat-view
+				.chatwindow
+					p#chat-code
+					.count-timer
+						p#left-label Time Left:
+						#left-time
+							.dash(class="minutes_dash")
+								span.dash_title
+								.digit
+									.top(style='display: none;') 0
+									#min_11.bottom(style='display: block;')=rotate_time.min1
+								.digit
+									.top(style='display: none;') 0
+									#min_12.bottom(style='display: block;')=rotate_time.min2
+								span.colon_game :
+							.dash(class="seconds_dash")
+								span.dash_title
+								.digit
+									.top(style='display: none;') 0
+									#sec_21.bottom(style='display: block;')=rotate_time.sec1
+								.digit
+									.top(style='display: none;') 0
+									#sec_22.bottom(style='display: block;')=rotate_time.sec2
+					.messagewindow
+			.chat-text
+				.message-box
+					input#message(type='text', name='message', maxlength='80')
+					button#reply(type='button',name='reply')
+			#r1.rate_widget
+				.ratings_chick()
+					p#label Catch
+	script(src="/socket.io/socket.io.js")
+	script(defer, src="/js/chat.js")
+	include footer
+	script
+		function set_by_offset1(min,sec) {
+			/*** room countdown ***/
+			$('#left-time').stopCountDown();
+			$('#left-time').setCountDown({
+				targetOffset: {
+					'day': 		0,
+					'month': 	0,
+					'year': 	0,
+					'hour': 	0,
+					'min': 		Number(min),
+					'sec': 		Number(sec)
+				}
+			});
+			$('#left-time').startCountDown();
+		}
+		$('.ratings_chick').hover(
+					function() {  
+						$(this).prevAll().andSelf().addClass('ratings_over');  
+						$(this).nextAll().removeClass('ratings_vote');   
+					},
+					function() {  
+						$(this).prevAll().andSelf().removeClass('ratings_over');
+					}  
+			);
+			$('.ratings_chick').click(
+					function(){
+						if($(this).is('.ratings_chick')){
+							$(this).prevAll().andSelf().removeClass('ratings_chick');
+							$(this).prevAll().andSelf().addClass('ratings_chick-sel');
+						}
+						else{
+							$(this).prevAll().andSelf().removeClass('ratings_chick-sel');
+							$(this).prevAll().andSelf().addClass('ratings_chick');
+						}
+					}
+			);
+		set_by_offset1(Number($("#min_11").html() + $("#min_12").html()),Number($("#sec_21").html() + $("#sec_22").html()));
