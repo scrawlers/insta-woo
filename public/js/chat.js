@@ -6,6 +6,7 @@ $(function() {
   var room;
   var me;
   socket.on('error', function (reason){
+	console.log(reason);
     console.error('Unable to connect Socket.IO', reason);
   });
 
@@ -48,17 +49,22 @@ $(function() {
 	    $("#sec_21").html((game_sec+'')[0]);
 	    $("#sec_22").html((game_sec+'')[1]);
 	    set_by_offset1(game_min,game_sec);
+	    console.log(game_min);
+	    console.log(game_sec);
   });
 socket.on('switch_room', function (data){
 	window.location = '/chat?rotate_time='+data;
 });
+
 socket.on('rank_room', function (data){
 	var data = JSON.stringify(data);
 	$.post( '/ranking', {data:data} ).done(function(data){
 		window.location = '/rankings';
 	});
-	
-	
+});
+
+socket.on('chat_auto',function(data){
+	windows.location = '/chat';
 });
 
   socket.on('start_chat', function (data){
@@ -79,13 +85,34 @@ socket.on('rank_room', function (data){
 	    	$( "#dialog" ).dialog( "close" );
 	    }
   });
+  
+//------------------------------------------
+//jemo added topic for each chat per room
+socket.on('topic_per_room',function (data){
+	var member = data.members;
+	var topic = data.topic;
+	member.forEach(function(user){
+		var user = JSON.parse(user);
+		if(user.codename != $("#codename").html()){
+			$(" .messagewindow ").html("<p class='topic_per_room'><strong>TOPIC: "+topic+"</strong></p>");
+		}
+		else{
+			me = user;
+		}
+	});
+});
+
+//------------------------------------------
+  
   socket.on('members', function (data){
 	//  alert(JSON.stringify(data));
 	  data.forEach(function(user){
 		  var user = JSON.parse(user);
+		  //alert($("#codename").html());
 		  if(user.codename !=  $("#codename").html()){
 			  $(".current-photo").html("<img class='cpimg' src='"+user.photourl+"'></img>");
 			  $("#chat-code").html(user.codename);
+			  //socket.emit('cp-username',user.codename);
 		  }
 		  else{
 			  me = user;
@@ -102,6 +129,7 @@ socket.on('rank_room', function (data){
 	  
 	 // window.location = '/ranking'
   });
+  
   socket.on('room_members', function (data){
 	  room_members = data.members;
 	  room = data.room;
@@ -152,7 +180,14 @@ socket.on('rank_room', function (data){
 
   socket.on('user leave', function(data) {
   });
-
+  $(".ratings_chick").click(function(){
+	  var my_rate = $("#codename").html();
+	  //alert("--check if user if the chatmate--");
+	  //console.log(user);
+	  //alert(my_rate);
+	  //var sendResult = {};
+	  socket.emit('send_rate',my_rate);
+  });
   $("#reply").click(function(){
 
 	  var inputText = $("#message").val().trim();

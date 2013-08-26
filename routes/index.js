@@ -10,7 +10,9 @@ exports.index = function(req, res){
   res.render('login');
 };
 exports.option = function(req, res){
-  res.render('option');
+	console.log("----Here----");
+	console.log(req.session.passport.user.gender);
+    res.render('option',{profile:req.session.passport.user.gender});
 };
 exports.chat = function(req,res){
 	

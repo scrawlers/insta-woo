@@ -82,7 +82,7 @@ app.post('/ranking',restrict,function(req, res){
 app.get('/rankings',restrict,function(req, res){
 	if(req.cookies.data){
 		var members = JSON.parse(req.cookies.data);
-		
+		console.log(req.cookies.data);
 		var visitors = new Array();
 		members.forEach(function(member){
 			member.members.forEach(function(user){

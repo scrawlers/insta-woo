@@ -59,6 +59,8 @@ module.exports = {
     		GetVisitors : ['GetRooms', function(cb,result){
     			var rooms = result.GetRooms;
     			var room_visitors = new Array();
+    			console.log("--checking rooms and rooms.length--");
+    			console.log(rooms && rooms.length);
     			if(rooms && rooms.length){
     				var room_ctr = 1;
     				rooms.forEach(function(room){
@@ -298,10 +300,70 @@ module.exports = {
         });
         if(!isUserExist){
             client.srem('hc:rooms',JSON.stringify(room));
-            room.visitor.push(visitor);    
+            room.visitor.push(visitor);
         }
         client.sadd('hc:rooms',JSON.stringify(room));
     },
+    //------------------------------------------
+    //add new function for rating per person
+    addRating : function(client,user){
+//    	var users = user;
+ //   	async.auto({
+//    		getList: function(fn){
+//		    	client.smembers('hc:rooms',function(err, rooms){
+//		            if(err){
+//		                fn(err);
+//		            }
+//		            else{
+//		            	var room_map = 1;
+//		            	var ar = new Array();
+//		            	rooms.forEach(function(room,fn){
+//		            		client.smembers('hc:room:'+room+':visitor',function(err, visitors){
+//		                        if(err){
+//		                            fn(err);
+//		                        }
+//		                        else{
+//		                        	visitors.forEach(function(visitor){
+//		                        		if(users.username==visitor.username){
+//		                        			ar.push({room:room_map,members:visitor});
+//		                        		}
+//		                        	});
+//		                        }
+//		                        if(room_map >= rooms.length){
+//		                        	fn(null,ar);
+//		                        }
+//		                        room_map++;
+//		                    });
+//		            	});
+//		            	
+//		            }
+//		        });
+//    		},
+//    		sortList: ['getList',function(fn,result){
+//    			var rooms = result.getList.room;
+//    			var list_visitor = result.getList.members;
+//    			members.forEach(function(visitor){
+//    				visitor = JSON.parse(visitor);
+//    				if(user.username != visitor.username){
+//    					client.smembers('hc:like:'+visitor.codename,function(err,results){
+//    						if(err){
+//    			                results(err);
+//    			            }
+//    			            else{
+//    			                results(null,rooms);
+//    			            }
+//    					});
+//    					if(results.length == 0){
+//    						var like = new Array();
+//    						like.push(user.codename);
+//    						client.sadd('hc:like:'+visitor.codename,JSON.stringify(like));
+//    					}
+//    				}
+//    			});
+//    		}],
+//    	});
+    },
+    //--------------------------------------------
     cleanRooms : function(client,fn){
     	client.keys('hc:*', function(err, keys) {
 			if(keys){

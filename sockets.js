@@ -45,8 +45,8 @@ io.configure(function() {
 var timer_start = false;
 var rotate_ctr = 0;
 var chat_lock = false;
-var config_game_time = 120000;
-var config_rotate_time = 60000;
+var config_game_time = 15000;
+var config_rotate_time = 15000;
 var start_time = Number(new Date()) + config_game_time;
 io.sockets.on('connection', function (socket) {
   
@@ -64,23 +64,54 @@ io.sockets.on('connection', function (socket) {
 	  model.accomodateVisitor(client,user,function(err,result){
 		  var room = result.RecordToRedis;
 		  var members = result.getRoomMembers;
+		  var topic = "MOVIES";
 		  socket.join(room);
 		  var game_left = Number(start_time) - Number(new Date());
 		  if(!timer_start){
 			  io.sockets.in(room).emit('game_left',game_left );
 			  console.log("game_left: "+game_left);
 		  }
-		  
-		  
-
 		  io.sockets.in(room).emit('members', members);  
 		  socket.on('log_out', function(data) {
 	          
 	          client.srem('hc:room:'+room+':visitor',JSON.stringify(user));
 	      });
+		  io.sockets.in(room).emit('topic_per_room', {members:members,topic:topic});
+		  
+		  //--------------newly added code----------------------
+		  socket.on('send_rate',function(data){
+			  model.roomMembers(client,function(err,roomVisitors){
+		    	roomVisitors.forEach(function(room_visitor){
+		    		var members = room_visitor.members;
+		    		members.forEach(function(visitor){
+		    			visitor = JSON.parse(visitor);
+		    			console.log("---visitor---");
+		    			console.log(visitor);
+		    			if(user.gender != visitor.gender){
+		    				console.log("visitor.gender and codename");
+		    				console.log(visitor.gender);
+		    				console.log(visitor.codename);
+		    				//client.smembers('hc:like:'+visitor.codename,likes);
+		    					
+		    				//	if(err){
+		    				//		roomVisitors(err);
+		    				//	}
+		    				//	console.log("--likes.length--");
+			    			//	console.log(JSON.parse(likes));
+			    			//	if(likes.length == 0){
+			    					var like = new Array();
+			    					like.push(user.codename);
+			    					console.log("--LIKE--");
+			    					console.log(like);
+			    					client.sadd('hc:like:'+visitor.codename,JSON.stringify(like));
+			    			//	}
+		    				//});
+		    			}
+		    		}); 
+		    	});
+		    });
+		  });
 		  socket.on('my msg', function(data) {
-	          
-	        
 	        var no_empty = data.msg.replace("\n","");
 	        if(no_empty.length > 0) {
 	          io.sockets.in(room).emit('new msg', {
@@ -126,21 +157,29 @@ timer.Timer(function(){
 				
 				if(rotate_ctr >= (rooms.length - 1)){
 					for(var i=0; i < rooms.length; i++){
-						io.sockets.in(rooms[i].no).emit('rank_room', rooms); 
-						client.del('hc:rooms');
-						client.del('hc:room:'+rooms[i].no+':visitor');
+						io.sockets.in(rooms[i].no).emit('chat_auto', rooms); 
+//						client.del('hc:rooms');
+//						client.del('hc:room:'+rooms[i].no+':visitor');
 						start_time = Number(new Date()) + config_game_time;
-						timer_start = false;
+//						timer_start = false;
 					}
 				}
 				else{
 					for(var j=0; j < rooms.length; j++){
-						io.sockets.in(rooms[j].no).emit('switch_room',config_rotate_time ); 
+						console.log(rooms.length);
+						io.sockets.in(rooms[j].no).emit('switch_room',config_rotate_time );
+						console.log("--switch room--")
+						console.log(rooms[j].no);
+//						io.sockets.in(rooms[j].no).emit('topic_per_room',config_rotate_time );
 						
 					}
 					rotate_ctr++;
 				}
 				chat_lock = false;
+//				timer_start = false; //newly added dor check
+//				start_time = Number(new Date()) + config_game_time;
+//				rotate_time = Number(new Date()) + config_rotate_time;
+//				rotate_left = Number(rotate_time) - Number(new Date());
 			}
 		});
 		

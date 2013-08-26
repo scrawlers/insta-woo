@@ -1,14 +1,14 @@
 {
   "auth": {
     "twitter": {
-      "consumerkey" : "uSBZ86eTy3sSJ3M49seaA",
-      "consumersecret" : "l5WXaz5IZ0ZmvGnTcEbJw6Zp0OIRQhkNW96uhTt0m0",
-      "callback" : "http://insta-woo.com/authtw/callback"
+      "consumerkey" : "LEMDKdQ4NXGOddvSjJOtBQ",
+      "consumersecret" : "44dQ4l0dlLyXAYjf09m4pLTUPt1J9sysFeXmhKJDA",
+      "callback" : "http://54.251.215.151:3000/authtw/callback"
     },
     "facebook": {
-      "clientid" : "509205152492505",
-      "clientsecret" : "f1aa93e7264d3d6e97416b0c2e44faad",
-      "callback" : "http://hatchcatch.com/authfb/callback"
+      "clientid" : "329613163813777",
+      "clientsecret" : "05fd646b7ba719c7a64a6f2608d4fc86",
+      "callback" : "http://192.168.1.105/authfb/callback"
     }
   }
 }

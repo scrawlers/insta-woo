@@ -5894,6 +5894,17 @@ body.chat-page {
     text-align: left;
     width: 317px;
 }
+
+.topic_per_room {
+	display: block;
+	margin: 0 auto;
+	position: relative;
+	text-align: center;
+	width: 317px;
+	height: 20px;
+	border: 1px solid;
+}
+
 .you-chat {
     background-color: transparent;
     background-image: url("/img/hc-theme/instawoo-baloon-female.png");

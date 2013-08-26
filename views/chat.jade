@@ -5,7 +5,7 @@ block content
         .header-wrapper-chat
             .signout-div
                 p#codename.pcn=user.codename
-                a.signout(href="/logout")
+                a.signout(href="/ranking")
                 .header-chat
         .chat-container
             .photo-con
@@ -33,7 +33,7 @@ block content
                 input#message(type='text', name='message')
                 button#reply(type='button',name='reply')
                 #r1.rate_widget
-                    .ratings_chick()
+                    #rate.ratings_chick()
     script(src="/socket.io/socket.io.js")
     script(defer, src="/js/chat.js")
     script
